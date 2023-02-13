@@ -63,16 +63,16 @@ const update = async (udpateInfo: UpdateInfo): Promise<void> => {
 
   let message: Message | null = null;
 
-  if (DiscordJson.messageId !== null) {
-    message = await channel.messages.fetch(DiscordJson.messageId);
-    message.edit({ embeds: [embed] });
-  } else {
+  if (DiscordJson.messageId === null) {
     message = await channel.send({ embeds: [embed] });
 
     const json = JSON.stringify({
       messageId: message.id,
     });
     fs.writeFileSync('src/data/discord.json', json);
+  } else {
+    message = await channel.messages.fetch(DiscordJson.messageId);
+    message.edit({ embeds: [embed] });
   }
 
   if (!udpateInfo.minecraft.isOnline) {
