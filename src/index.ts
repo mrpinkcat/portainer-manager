@@ -30,7 +30,7 @@ enum ServerStatus {
   RUNNING = 'running',
 };
 
-const tick = 20 * 1000;
+const tick = 60 * 1000;
 let minecraftStack: Stack | null = null;
 let token: string | null = null;
 let stopTimeout: number | null = null;
