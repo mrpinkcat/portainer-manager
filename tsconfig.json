@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "node16",
+    "target": "ES2022",
+    "jsx": "preserve",
+    "declaration": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "strict": true,
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+  },
+  "include": ["src/**/*.ts", "node_modules/rcon/rcon.d.ts", "node_modules/rcon/rcon.d.ts"],
+  "exclude": ["node_modules"]
+}
