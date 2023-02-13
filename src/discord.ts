@@ -6,13 +6,15 @@ import {
   EmbedBuilder,
   Message,
 } from 'discord.js';
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
 import fs from 'fs';
 
 import { startMinecraft } from './';
 import DiscordJson from './data/discord.json';
 
-config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 interface UpdateInfo {
   minecraft: {
@@ -130,6 +132,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   if (interaction.customId === "start-minecraft") {
+    console.log(interaction.client.user?.tag);
     await interaction.reply({ content: "Le serveur minecraft va démarrer...", ephemeral: true });
     await startMinecraft();
     interaction.deleteReply();

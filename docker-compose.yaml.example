@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  node:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - NODE_ENV=production
+      - RCON_PASSWORD=
+      - SERVER_ADDRESS=
+      - STOP_TIMEOUT=15
+      - DISCORD_TOKEN=
+      - DISCORD_CHANNEL_ID=
+    container_name: portainer-discord-manager

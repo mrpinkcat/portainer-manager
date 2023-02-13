@@ -13,7 +13,9 @@ interface Stack {
   Status: StackStatus,
 }
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 const api = axios.create({
   // baseURL: "https://portainer.mrpink.dev/api",

@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
 import Rcon from 'rcon';
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 const rcon = new Rcon(process.env.SERVER_ADDRESS, 25575, process.env.RCON_PASSWORD);
 
