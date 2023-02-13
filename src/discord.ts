@@ -7,14 +7,18 @@ import {
   Message,
 } from 'discord.js';
 import dotenv from 'dotenv';
-import fs from 'fs';
 
 import { startMinecraft } from './';
-import DiscordJson from './data/discord.json';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
+
+if (!process.env.DISCORD_MESSAGE_ID) {
+  throw new Error('DISCORD_MESSAGE_ID is not defined');
+}
+
+const messageId = process.env.DISCORD_MESSAGE_ID;
 
 interface UpdateInfo {
   minecraft: {
@@ -63,17 +67,8 @@ const update = async (udpateInfo: UpdateInfo): Promise<void> => {
 
   let message: Message | null = null;
 
-  if (DiscordJson.messageId === null) {
-    message = await channel.send({ embeds: [embed] });
-
-    const json = JSON.stringify({
-      messageId: message.id,
-    });
-    fs.writeFileSync('src/data/discord.json', json);
-  } else {
-    message = await channel.messages.fetch(DiscordJson.messageId);
-    message.edit({ embeds: [embed] });
-  }
+  message = await channel.messages.fetch(messageId);
+  await message.edit({ embeds: [embed] });
 
   if (!udpateInfo.minecraft.isOnline) {
     const actionRow = new ActionRowBuilder()
@@ -83,12 +78,12 @@ const update = async (udpateInfo: UpdateInfo): Promise<void> => {
         .setCustomId("start-minecraft")
       );
 
-    message.edit({
+    await message.edit({
       // @ts-ignore
       components: [actionRow],
     })
   } else {
-    message.edit({
+    await message.edit({
       components: [],
     })
   }
