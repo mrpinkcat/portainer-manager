@@ -63,7 +63,7 @@ const update = async (udpateInfo: UpdateInfo): Promise<void> => {
 
   let message: Message | null = null;
 
-  if (DiscordJson.messageId) {
+  if (DiscordJson.messageId !== null) {
     message = await channel.messages.fetch(DiscordJson.messageId);
     message.edit({ embeds: [embed] });
   } else {
