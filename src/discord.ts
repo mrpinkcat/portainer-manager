@@ -9,6 +9,7 @@ import {
 import dotenv from 'dotenv';
 
 import { startMinecraft } from './';
+import notifier from './notifier';
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
@@ -127,6 +128,11 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   if (interaction.customId === "start-minecraft") {
+    notifier(
+      "Minecraft server starting",
+      `The minecraft server is starting. Requested by ${interaction.user.tag}`,
+      "https://portainer.mrpink.dev",
+    );
     console.log(`Start requested by ${interaction.user.tag}`);
     await interaction.reply({ content: "Le serveur minecraft va démarrer...", ephemeral: true });
     await startMinecraft();

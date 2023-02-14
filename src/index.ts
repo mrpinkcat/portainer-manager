@@ -11,6 +11,7 @@ import {
   setup,
   update,
 } from './discord';
+import notifier from './notifier';
 import {
   connect,
   disconnect,
@@ -160,6 +161,11 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
     console.log("Server stopped by timer");
     timeRemaining = null;
     serverStatus = ServerStatus.STOPPED;
+    notifier(
+      "Server stopped by timer",
+      `The server has been stopped by the timer because no players were online for ${stopTimeout} minutes`,
+      "https://portainer.mrpink.dev",
+    );
     resolve(ServerStopResonponseStatus.SUCCESS);
   } else {
     console.log("Server stop timer canceled");
@@ -168,8 +174,6 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
     resolve(ServerStopResonponseStatus.CANCELED);
   }
 });
-
-
 
 start();
 

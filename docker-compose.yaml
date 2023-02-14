@@ -12,4 +12,6 @@ services:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}
       - DISCORD_MESSAGE_ID=${DISCORD_MESSAGE_ID}
+      - PUSHOVER_TOKEN=${PUSHOVER_TOKEN}
+      - PUSHOVER_USER=${PUSHOVER_USER}
     container_name: portainer-discord-manager
