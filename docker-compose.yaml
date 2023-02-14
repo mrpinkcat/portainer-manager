@@ -3,7 +3,7 @@ services:
   node:
     build: .
     pull_policy: build
-    restart: unless-stopped
+    # restart: unless-stopped
     environment:
       - NODE_ENV=production
       - RCON_PASSWORD=${RCON_PASSWORD}
