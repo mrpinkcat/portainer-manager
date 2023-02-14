@@ -100,10 +100,7 @@ const startStack = async (stackId: Number, token: String) => {
       "Authorization": `Bearer ${token}`,
     },
   })
-  .then(() => {
-    console.log(`Stack ${stackId} started`);
-  });
-  return;
+  console.log(`Stack ${stackId} started`);
 };
 
 export {
