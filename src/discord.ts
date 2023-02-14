@@ -45,7 +45,8 @@ client.on("ready", () => {
 });
 
 const setup = async () => {
-  await client.login(token); 
+  await client.login(token);
+  await createMessageIfItDoesntExist();
 }
 
 /**
@@ -139,5 +140,30 @@ client.on("interactionCreate", async (interaction) => {
     interaction.deleteReply();
   }
 });
+
+const createMessageIfItDoesntExist = async () => {
+  const channel = await client.channels.fetch(channelId);
+
+  if (!channel) {
+    throw new Error("Channel not found");
+  }
+
+  if (!channel.isTextBased()) {
+    throw new Error("Channel is not text based");
+  }
+
+  const message = await channel.messages.fetch(messageId);
+
+  if (!message) {
+    // Send a new message with out embed
+    const embed = new EmbedBuilder();
+    embed.setTitle("MEGATRON Serveurs, démarrage...");
+    const message = await channel.send({ embeds: [embed] });
+    console.log(`Message created ${message.id} , shutting down`);
+    process.exit(0);
+  } else {
+    console.log("Message already exists");
+  }
+}
 
 export { client, setup, update };
