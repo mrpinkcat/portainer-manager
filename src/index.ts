@@ -85,7 +85,7 @@ const updateDiscordMessage = async () => {
   }
 };
 
-const startMinecraft = async () => {
+const startMinecraft = async () =>{
   if (minecraftStack === null || token === null) {
     throw new Error("Minecraft stack not found");
   }
@@ -98,6 +98,8 @@ const startMinecraft = async () => {
   serverStatus = ServerStatus.RUNNING;
 
   await updateDiscordMessage();
+
+  return;
 };
 
 const stopMinecraft = async () => {
@@ -127,7 +129,7 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
 
   timeRemaining = stopTimeout;
   // Wait until the server is empty for 15 minutes
-  while (timeRemaining > 0) {
+  while (timeRemaining > 0 || timeRemaining === null) {
     console.log(`Waiting for ${timeRemaining} minutes...`);
     await connect();
     playerCount = await getPlayerCount();
@@ -144,13 +146,18 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
     await new Promise((resolve) => setTimeout(resolve, tick));
   }
   
-  console.log("Stopping server...");
-  await disconnect();
-  await stopStack(minecraftStack.Id, token);
-  await updateDiscordMessage();
-  console.log("Server stopped by timer");
-  timeRemaining = null;
-  resolve(ServerStopResonponseStatus.SUCCESS);
+  if (timeRemaining === 0) {
+    console.log("Stopping server...");
+    await disconnect();
+    await stopStack(minecraftStack.Id, token);
+    await updateDiscordMessage();
+    console.log("Server stopped by timer");
+    timeRemaining = null;
+    resolve(ServerStopResonponseStatus.SUCCESS);
+  } else {
+    console.log("Server stop timer canceled");
+    resolve(ServerStopResonponseStatus.CANCELED);
+  }
 });
 
 
