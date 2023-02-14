@@ -39,30 +39,35 @@ let stopTimeout: number | null = null;
 let serverStatus: ServerStatus = ServerStatus.STOPPED;
 
 const start = async () => {
-  console.log("Starting...");
-  
-  if (!process.env.STOP_TIMEOUT) {
-    throw new Error("STOP_TIMEOUT is not defined");
-  }
-  stopTimeout = parseInt(process.env.STOP_TIMEOUT);
-
-  await setup();
-  token = await getJwt();
-  const stacks = await getStacks(token);
-  minecraftStack = stacks.find((stack) => stack.Name === "minecraft-server") || null;
-  if (minecraftStack) {
-    if (minecraftStack.Status !== StackStatus.STOPPED) {
-      serverStatus = ServerStatus.RUNNING;
-    } else {
-      serverStatus = ServerStatus.STOPPED;
+  try {
+    console.log("Starting...");
+    
+    if (!process.env.STOP_TIMEOUT) {
+      throw new Error("STOP_TIMEOUT is not defined");
     }
-
-    updateDiscordMessage();
-    setInterval(async () => {
-      console.log(`Updating discord message at ${new Date().toISOString()}...`);
-      await updateDiscordMessage();
-      console.log(`Discord message updated at ${new Date().toISOString()}`);
-    }, tick);
+    stopTimeout = parseInt(process.env.STOP_TIMEOUT);
+  
+    await setup();
+    token = await getJwt();
+    const stacks = await getStacks(token);
+    minecraftStack = stacks.find((stack) => stack.Name === "minecraft-server") || null;
+    if (minecraftStack) {
+      if (minecraftStack.Status !== StackStatus.STOPPED) {
+        serverStatus = ServerStatus.RUNNING;
+      } else {
+        serverStatus = ServerStatus.STOPPED;
+      }
+  
+      updateDiscordMessage();
+      setInterval(async () => {
+        console.log(`Updating discord message at ${new Date().toISOString()}...`);
+        await updateDiscordMessage();
+        console.log(`Discord message updated at ${new Date().toISOString()}`);
+      }, tick);
+    }
+  } catch (error) {
+    console.error("ERROR");
+    console.error(error);
   }
 };
 
