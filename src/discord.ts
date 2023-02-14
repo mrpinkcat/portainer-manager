@@ -15,10 +15,6 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
-if (!process.env.DISCORD_MESSAGE_ID) {
-  throw new Error('DISCORD_MESSAGE_ID is not defined');
-}
-
 const messageId = process.env.DISCORD_MESSAGE_ID;
 
 interface UpdateInfo {
@@ -55,6 +51,9 @@ const setup = async () => {
  * @returns The message id
  */
 const update = async (udpateInfo: UpdateInfo): Promise<void> => {
+  if (!process.env.DISCORD_MESSAGE_ID) {
+    throw new Error('DISCORD_MESSAGE_ID is not defined');
+  }
   const channel = await client.channels.fetch(channelId);
 
   if (!channel) {
