@@ -15,6 +15,10 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
+if (!process.env.DISCORD_MESSAGE_ID) {
+  throw new Error('DISCORD_MESSAGE_ID is not defined');
+}
+
 const messageId = process.env.DISCORD_MESSAGE_ID;
 
 interface UpdateInfo {
@@ -51,9 +55,6 @@ const setup = async () => {
  * @returns The message id
  */
 const update = async (udpateInfo: UpdateInfo): Promise<void> => {
-  if (!process.env.DISCORD_MESSAGE_ID) {
-    throw new Error('DISCORD_MESSAGE_ID is not defined');
-  }
   const channel = await client.channels.fetch(channelId);
 
   if (!channel) {
@@ -141,6 +142,11 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 const createMessageIfItDoesntExist = async () => {
+  const isCreateMessage = process.env.DISCORD_CREATE_MESSAGE === "true";
+
+  if (!isCreateMessage) {
+    return;
+  }
   const channel = await client.channels.fetch(channelId);
 
   if (!channel) {
@@ -151,18 +157,12 @@ const createMessageIfItDoesntExist = async () => {
     throw new Error("Channel is not text based");
   }
 
-  const message = await channel.messages.fetch(messageId);
-
-  if (!message) {
-    // Send a new message with out embed
-    const embed = new EmbedBuilder();
-    embed.setTitle("MEGATRON Serveurs, démarrage...");
-    const message = await channel.send({ embeds: [embed] });
-    console.log(`Message created ${message.id} , shutting down`);
-    process.exit(0);
-  } else {
-    console.log("Message already exists");
-  }
+  // Send a new message with out embed
+  const embed = new EmbedBuilder();
+  embed.setTitle("MEGATRON Serveurs, démarrage...");
+  const message = await channel.send({ embeds: [embed] });
+  console.log(`Message created, shutting down. Please set DISCORD_MESSAGE_ID to ${message.id} and DISCORD_CREATE_MESSAGE to false. Then restart the bot.`);
+  process.exit(0);
 }
 
 export { client, setup, update };
