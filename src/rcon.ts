@@ -32,6 +32,7 @@ const connectRcon = async () => new Promise<void>((resolve, reject) => {
 
 const waitUntilConnected = async () => new Promise<void>((resolve, reject) => {
   if (isRconConnected) {
+    console.log('RCON is already connected');
     resolve();
   } else {
     console.log('RCON connecting...');
@@ -83,6 +84,7 @@ const disconnect = async () => new Promise<void>((resolve, reject) => {
     rcon.on('end', () => {
       isRconConnected = false;
       console.log('RCON disconnected');
+      rcon.removeAllListeners('end');
       resolve();
     });
   }
