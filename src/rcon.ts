@@ -40,6 +40,7 @@ const waitUntilConnected = async () => new Promise<void>((resolve, reject) => {
       isRconConnected = true;
       console.log('Authed! (waitUntilConnected)');
       rcon.removeAllListeners('auth');
+      rcon.removeAllListeners('error');
       resolve();
     });
     rcon

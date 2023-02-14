@@ -31,7 +31,7 @@ enum ServerStatus {
   RUNNING = 'running',
 };
 
-const tick = 60 * 1000;
+const tick = 30 * 1000;
 let minecraftStack: Stack | null = null;
 let token: string | null = null;
 let stopTimeout: number | null = null;
@@ -57,9 +57,10 @@ const start = async () => {
     }
 
     updateDiscordMessage();
-    setInterval(() => {
+    setInterval(async () => {
       console.log(`Updating discord message at ${new Date().toISOString()}...`);
-      updateDiscordMessage();
+      await updateDiscordMessage();
+      console.log(`Discord message updated at ${new Date().toISOString()}`);
     }, tick);
   }
 };
@@ -70,12 +71,14 @@ const updateDiscordMessage = async () => {
   }
   // Check if the minecraft stack is online
   minecraftStack = await getStack(minecraftStack.Id, token);
-  const isOnline = minecraftStack.Status === StackStatus.DEPLOYED && serverStatus === ServerStatus.RUNNING;
+  const isOnline = minecraftStack.Status === StackStatus.DEPLOYED && (serverStatus === ServerStatus.RUNNING || serverStatus === ServerStatus.WAIT_FOR_STOP);
 
   if (isOnline) {
     await connect();
     const playerCount = await getPlayerCount();
-    startServerStopTimer(minecraftStack.Id);
+    if (playerCount === 0) {
+      startServerStopTimer(minecraftStack.Id);
+    }
     if (timeRemaining !== null) {
       await update({ minecraft: { isOnline, playerCount, timeRemaining } });
     } else {
