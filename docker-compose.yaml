@@ -3,6 +3,8 @@ services:
   node:
     build: .
     pull_policy: build
+    volumes:
+      - /home/gatien/npm-debug:/root/.npm/_logs
     # restart: unless-stopped
     environment:
       - NODE_ENV=production
