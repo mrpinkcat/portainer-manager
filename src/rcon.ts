@@ -35,12 +35,10 @@ const waitUntilConnected = async () => new Promise<void>((resolve, reject) => {
     console.log('RCON is already connected');
     resolve();
   } else {
-    console.log('RCON connecting...');
-    rcon.connect();
     rcon
     .on('auth', () => {
       isRconConnected = true;
-      console.log('Authed!');
+      console.log('Authed! (waitUntilConnected)');
       rcon.removeAllListeners('auth');
       resolve();
     });
@@ -52,6 +50,8 @@ const waitUntilConnected = async () => new Promise<void>((resolve, reject) => {
         rcon.connect();
       }, 10000);
     });
+    console.log('RCON wait until connecting...');
+    rcon.connect();
   }
 });
 

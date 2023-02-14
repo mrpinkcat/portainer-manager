@@ -26,6 +26,7 @@ enum ServerStopResonponseStatus {
 
 enum ServerStatus {
   STOPPED = 'stopped',
+  WAIT_FOR_STOP = 'wait_for_stop',
   STARTING = 'starting',
   RUNNING = 'running',
 };
@@ -115,7 +116,7 @@ const stopMinecraft = async () => {
 let timeRemaining: number | null = null;
 
 const startServerStopTimer = async (stackId: number): Promise<ServerStopResonponseStatus> => new Promise(async (resolve) => {
-  if (timeRemaining !== null) {
+  if (serverStatus === ServerStatus.WAIT_FOR_STOP) {
     console.log("Server stop timer already launched");
     resolve(ServerStopResonponseStatus.ALREADY_LAUNCHED);
     return;
@@ -125,12 +126,13 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
     throw new Error("Minecraft stack not found or stop timeout is not defined");
   }
 
+  serverStatus = ServerStatus.WAIT_FOR_STOP;
   let playerCount = 0;
 
   timeRemaining = stopTimeout;
   // Wait until the server is empty for 15 minutes
   while (timeRemaining > 0 || timeRemaining === null) {
-    console.log(`Waiting for ${timeRemaining} minutes...`);
+    console.log(`Waiting for ${timeRemaining} minutes to stop the server...`);
     await connect();
     playerCount = await getPlayerCount();
     if (playerCount === 0) {
@@ -139,6 +141,7 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
     } else {
       console.log(`${playerCount} players online, Cancelling server stop timer...`);
       timeRemaining = null;
+      serverStatus = ServerStatus.RUNNING;
       resolve(ServerStopResonponseStatus.CANCELED);
       return;
     }
@@ -153,9 +156,12 @@ const startServerStopTimer = async (stackId: number): Promise<ServerStopResonpon
     await updateDiscordMessage();
     console.log("Server stopped by timer");
     timeRemaining = null;
+    serverStatus = ServerStatus.STOPPED;
     resolve(ServerStopResonponseStatus.SUCCESS);
   } else {
     console.log("Server stop timer canceled");
+    serverStatus = ServerStatus.RUNNING;
+    timeRemaining = null;
     resolve(ServerStopResonponseStatus.CANCELED);
   }
 });

@@ -127,7 +127,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   if (interaction.customId === "start-minecraft") {
-    console.log(interaction.client.user?.tag);
+    console.log(`Start requested by ${interaction.user.tag}`);
     await interaction.reply({ content: "Le serveur minecraft va démarrer...", ephemeral: true });
     await startMinecraft();
     interaction.deleteReply();
